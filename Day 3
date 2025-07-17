@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int maximumLength(vector<int>& nums, int k) {
+        int maxLength = 2;
+        for(int targetMod = 0; targetMod < k; targetMod++){
+            vector<int> dp(k, 0);
+            for(int num : nums){
+                int currentMod = num % k;
+                int previousMod = (targetMod - currentMod + k) % k;
+                dp[currentMod] = dp[previousMod]+1;
+            }
+            for(int len:dp){
+                maxLength = max(maxLength, len);
+            }
+
+        }
+        return maxLength;
+    }
+};

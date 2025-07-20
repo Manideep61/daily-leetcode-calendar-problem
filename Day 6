@@ -1,0 +1,70 @@
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+struct Node {
+    string name;
+    unordered_map<string, Node*> children;
+    string signature;
+    Node(const string& name) : name(name){}
+};
+class Solution {
+public:
+    vector<vector<string>> deleteDuplicateFolder(vector<vector<string>>& paths) {
+        Node* root = new Node("");
+        for(const auto& path : paths){
+            Node* current = root;
+            for(const auto& folder : path){
+                if(!current->children.count(folder)){
+                    current->children[folder] = new Node(folder);
+                }
+                current = current->children[folder];
+            }
+        }
+        unordered_map<string, int> signatureCount;
+        generateSignatures(root, signatureCount);
+        vector<vector<string>> result;
+        vector<string> currentPath;
+        for (auto& [name, child] : root->children) {
+            collectPaths(child, currentPath, result, signatureCount);
+        }
+        deleteTree(root);
+        return result;
+    }
+private:
+    void generateSignatures(Node* node, unordered_map<string, int>& signatureCount) {
+        if (node->children.empty()) {
+            node->signature = "";
+            return;
+        }
+        vector<string> childSignatures;
+        for (auto& [name, child] : node->children) {
+            generateSignatures(child, signatureCount);
+            childSignatures.push_back(name + "(" + child->signature + ")");
+        }
+        sort(childSignatures.begin(), childSignatures.end());
+        node->signature = "";
+        for (const string& sig : childSignatures) {
+            node->signature += sig;
+        }
+        signatureCount[node->signature]++;
+    }
+    void collectPaths(Node* node, vector<string>& path, vector<vector<string>>& result,unordered_map<string, int>& signatureCount) {
+        if (!node->children.empty() && signatureCount[node->signature] >= 2) {
+            return;
+        }
+        path.push_back(node->name);
+        result.push_back(path);
+        for (auto& [name, child] : node->children) {
+            collectPaths(child, path, result, signatureCount);
+        }
+        path.pop_back();
+    }
+    void deleteTree(Node* node) {
+        for (auto& [_, child] : node->children) {
+            deleteTree(child);
+        }
+        delete node;
+    }
+};

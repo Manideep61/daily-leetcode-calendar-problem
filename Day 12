@@ -1,0 +1,39 @@
+class Solution {
+public:
+    long long maxSubarrays(int n, vector<vector<int>>& conflictingPairs) {
+        vector<vector<int>> conflictList(n+1);
+        for(int i=0;i<conflictingPairs.size();i++){
+            int a = conflictingPairs[i][0];
+            int b = conflictingPairs[i][1];
+            int bigger = max(a,b);
+            int smaller = min(a,b);
+            conflictList[bigger].push_back(smaller);
+        }
+        long long answer = 0;
+        long long maxLeft = 0;
+        long long secondMaxLeft = 0;;
+        vector<long long>bonus(n+1,0);
+        for(int right = 1;right <=n;right++){
+            for(int i =0;i<conflictList[right].size();i++){
+                int leftValue = conflictList[right][i];
+                if(leftValue > maxLeft){
+                    secondMaxLeft = maxLeft;
+                    maxLeft = leftValue;
+                }else if (leftValue > secondMaxLeft){
+                    secondMaxLeft = leftValue;
+                }
+            }
+            answer += (right - maxLeft);
+            if(maxLeft >0){
+                bonus[maxLeft] += (maxLeft - secondMaxLeft);
+            }
+        }
+        long long maxBonus = 0;
+        for(int i =0;i<bonus.size();i++){
+            if(bonus[i]>maxBonus){
+                maxBonus = bonus[i];
+            }
+        }
+        return answer + maxBonus;
+    }
+};

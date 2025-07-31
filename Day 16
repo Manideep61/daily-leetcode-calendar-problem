@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int subarrayBitwiseORs(vector<int>& arr) {
+        vector<int>result;
+        vector<int> prev;
+        for(int i=0;i<(int)arr.size(); i++){
+            vector<int> cur = {arr[i]};
+            for(int j=0;j<(int)prev.size();j++){
+                cur.push_back(prev[j] | arr[i]);
+            }
+            sort(cur.begin(),cur.end());
+            cur.erase(unique(cur.begin(), cur.end()), cur.end());
+            result.insert(result.end(),cur.begin(),cur.end());
+            prev = cur;
+        }
+        sort(result.begin(),result.end());
+        result.erase(unique(result.begin(), result.end()), result.end());
+
+        return result.size();
+    }
+};

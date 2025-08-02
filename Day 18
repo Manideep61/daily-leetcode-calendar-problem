@@ -1,0 +1,46 @@
+class Solution {
+public:
+    long long minCost(vector<int>& basket1, vector<int>& basket2) {
+        map<int,int> totalCount;
+        for(int fruit : basket1){
+            totalCount[fruit]++;
+        }
+        for(int fruit : basket2){
+            totalCount[fruit]++;
+        }
+        long long smallestFruit = LLONG_MAX;
+        for(auto item : totalCount){
+            int fruit = item.first;
+            int count = item.second;
+            if(count % 2!=0){
+                return -1;
+            }
+            if(fruit < smallestFruit){
+                smallestFruit = fruit;
+            }
+        }
+        map<int,int>basket1Count;
+        for(int fruit : basket1){
+            basket1Count[fruit]++;
+        }
+        vector<long long> fruitsToSwap;
+        for(auto item : totalCount){
+            int fruit = item.first;
+            int total = item.second;
+            int expectedCount = total/2;
+            int difference = basket1Count[fruit]-expectedCount;
+            for(int i=0;i<abs(difference);i++){
+                fruitsToSwap.push_back(fruit);
+            }
+        }
+        sort(fruitsToSwap.begin(),fruitsToSwap.end());
+        long long totalCost = 0;
+        int swapsNeeded = fruitsToSwap.size()/2;
+        for(int i=0;i<swapsNeeded;i++){
+            long long fruitCost = fruitsToSwap[i];
+            long long alternativeCost = 2*smallestFruit;
+            totalCost += min(fruitCost, alternativeCost);
+        }
+        return totalCost;
+    }
+};

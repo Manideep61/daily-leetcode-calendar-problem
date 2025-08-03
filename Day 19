@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int maxTotalFruits(vector<vector<int>>& fruits, int startPos, int k) {
+        int l = 0;
+        int r =0;
+        int n = fruits.size();
+        int s =0;
+        int a =0;
+        auto step = [&](int l, int r)-> int {
+            if(fruits[r][0] <= startPos){
+                return startPos-fruits[l][0];
+            }else if(fruits[l][0] >= startPos){
+                return fruits[r][0] - startPos;
+            }else{
+                return min(abs(startPos - fruits[r][0]),abs(startPos - fruits[l][0]))+fruits[r][0]-fruits[l][0];
+            }
+        };
+        while (r<n){
+            s+=fruits[r][1];
+            while(l<=r && step(l,r)>k){
+                s-=fruits[l][1];
+                l++;
+            }
+            a = max(a, s);
+            r++;
+        }
+        return a;
+    }
+};

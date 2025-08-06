@@ -1,0 +1,57 @@
+class Solution {
+public:
+    int numOfUnplacedFruits(vector<int>& fruits, vector<int>& baskets) {
+        vector<int> sect_mx;
+        int n = baskets.size();
+        int seg = 1;
+        while ( seg * seg <= n){
+            seg++;
+        }
+        seg--;
+        int cnt = 0;
+        int max_in_segment = 0;
+        for(int i=0;i<n;i++){
+            if(cnt == seg){
+                sect_mx.push_back(max_in_segment);
+                max_in_segment = baskets[i];
+                cnt=1;
+            }else{
+                cnt++;
+                if(basket[i] > max_in_segment){
+                    max_in_segment = baskets[i];
+                }
+            }
+        }
+        sect_mx.push_back(max_in_segment);
+        int remain = 0;
+        for(int i =0;i<fruits.size();i++){
+            int k = 0;
+            int set = 1;
+            for(int j = 0;j<n;j+= seg){
+                if(sect_mx[k] < fruits[i]){
+                    k++;
+                    continue;
+                }
+                for(int r = j;r<j+seg && r<n;r++){
+                    if(baskets[r] >= fruits[i]){
+                        set = 0;
+                        baskets[r] = 0;
+                        break;
+                    }
+                }
+                if(set == 0){
+                    sect_mx[k] = 0;
+                    for(int r = j;r<j+seg && r<n;r++){
+                        if(baskets[r] > sect_mx[k]){
+                            sect_mx[k] = baskets[r];
+                        }
+                    }
+                   break;
+                }
+                k++;
+            }
+            remain += set;
+        }
+        return remain;
+    }
+};

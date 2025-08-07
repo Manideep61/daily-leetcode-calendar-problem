@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int maxCollectedFruits(vector<vector<int>>& fruits) {
+        int a = fruits.size();
+        int b = 0;
+        for (int c = 0; c < a; c++) {
+            b = b + fruits[c][c];
+        }
+        int d = a - 2;
+        for (int e = 0; e < d; e++) {
+            fruits[e][d - e] = 0;
+            fruits[e][d - e - 1] = 0;
+        }
+        fruits[d][0] = 0;
+        for (int f = 1; f < a - 1; f++) {
+            int g = f + 1 > a - f - 1 ? f + 1 : a - f - 1;
+            for (int h = g; h < a - 1; h++) {
+                int x = fruits[f - 1][h - 1];
+                int y = fruits[f - 1][h];
+                int z = fruits[f - 1][h + 1];
+                int m = x > y ? (x > z ? x : z) : (y > z ? y : z);
+                fruits[f][h] = fruits[f][h] + m;
+            }
+            int p = fruits[f - 1][a - 2];
+            int q = fruits[f - 1][a - 1];
+            fruits[f][a - 1] = fruits[f][a - 1] + (p > q ? p : q);
+        }
+        for (int i = 1; i < a - 1; i++) {
+            int j = i + 1 > a - i - 1 ? i + 1 : a - i - 1;
+            for (int k = j; k < a - 1; k++) {
+                int u = fruits[k - 1][i - 1];
+                int v = fruits[k][i - 1];
+                int w = fruits[k + 1][i - 1];
+                int m = u > v ? (u > w ? u : w) : (v > w ? v : w);
+                fruits[k][i] = fruits[k][i] + m;
+            }
+            int r = fruits[a - 2][i - 1];
+            int s = fruits[a - 1][i - 1];
+            fruits[a - 1][i] = fruits[a - 1][i] + (r > s ? r : s);
+        }
+        return b + fruits[a - 2][a - 1] + fruits[a - 1][a - 2];
+    }
+};

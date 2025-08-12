@@ -1,0 +1,33 @@
+class Solution {
+    static constexpr int MOD = 1'000'000'007;
+    int n, x;
+    int dp[301][301];
+    long long power(int base, int exp) {
+        long long result = 1;
+        for (int i = 0; i < exp; i++) {
+            result *= base;
+        }
+        return result;
+    }
+    int dfs(int rem, int num) {
+        if (rem == 0) return 1; 
+        if (rem < 0) return 0;
+        if (num > n) return 0;  
+        if (dp[rem][num] != -1) return dp[rem][num];
+        long long powVal = power(num, x);
+        int ways = 0;
+        if (powVal <= rem) {
+            ways += dfs(rem - (int)powVal, num + 1);
+        }
+        ways += dfs(rem, num + 1);
+        ways %= MOD;
+        return dp[rem][num] = ways;
+    }
+public:
+    int numberOfWays(int n_, int x_) {   
+        n = n_;  
+        x = x_;  
+        memset(dp, -1, sizeof(dp));
+        return dfs(n, 1);
+    }
+};

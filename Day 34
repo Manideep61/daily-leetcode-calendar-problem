@@ -1,0 +1,51 @@
+class Solution {
+    const double EPS = 1e-6; 
+public:
+    bool judgePoint24(vector<int>& cards) {
+        vector<double> numbers;
+        for (int i = 0; i < cards.size(); i++) {
+            numbers.push_back((double)cards[i]);
+        }
+        return solve(numbers);
+    }
+private:
+    bool solve(vector<double>& numbers) {
+        if (numbers.size() == 1) {
+            if (fabs(numbers[0] - 24.0) < EPS) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+        for (int i = 0; i < numbers.size(); i++) {
+            for (int j = 0; j < numbers.size(); j++) {
+                if (i == j) continue;
+                vector<double> nextNumbers;
+                for (int k = 0; k < numbers.size(); k++) {
+                    if (k != i && k != j) {
+                        nextNumbers.push_back(numbers[k]);
+                    }
+                }
+                vector<double> results = calculate(numbers[i], numbers[j]);
+                for (int r = 0; r < results.size(); r++) {
+                    nextNumbers.push_back(results[r]);
+                    if (solve(nextNumbers)) {
+                        return true;
+                    }
+                    nextNumbers.pop_back();
+                }
+            }
+        }
+        return false;
+    }
+    vector<double> calculate(double a, double b) {
+        vector<double> results;
+        results.push_back(a + b);
+        results.push_back(a - b);
+        results.push_back(b - a);
+        results.push_back(a * b);
+        if (fabs(b) > EPS) results.push_back(a / b);
+        if (fabs(a) > EPS) results.push_back(b / a);
+        return results;
+    }
+};

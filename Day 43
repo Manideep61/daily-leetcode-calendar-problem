@@ -1,0 +1,57 @@
+class Solution {
+public:
+    int rows, cols;
+    int directions[5] = {1, 1, -1, -1, 1};
+    int dp[500][500][4][2];
+    bool isOutOfBounds(int row, int col) {
+        return row < 0 || row >= rows || col < 0 || col >= cols;
+    }
+    int dfs(int row, int col, int direction, bool hasTurned, int expectedValue, vector<vector<int>>& grid) {
+        if (dp[row][col][direction][hasTurned] != -1) {
+            return dp[row][col][direction][hasTurned];
+        }
+        int maxLength = 1;
+        int currentValue = grid[row][col];
+        int nextRow = row + directions[direction];
+        int nextCol = col + directions[direction + 1];
+        if (!isOutOfBounds(nextRow, nextCol)) {
+            int nextValue = grid[nextRow][nextCol];
+            if (nextValue == expectedValue) {
+                maxLength = max(maxLength, 1 + dfs(nextRow, nextCol, direction, hasTurned, expectedValue ^ 2, grid));
+            }
+        }
+        if (!hasTurned) {
+            int newDirection = (direction + 1) % 4;
+            int turnRow = row + directions[newDirection];
+            int turnCol = col + directions[newDirection + 1];
+            if (!isOutOfBounds(turnRow, turnCol)) {
+                int turnValue = grid[turnRow][turnCol];
+                if (turnValue == expectedValue) {
+                    maxLength = max(maxLength, 1 + dfs(turnRow, turnCol, newDirection, true, expectedValue ^ 2, grid));
+                }
+            }
+        }
+        dp[row][col][direction][hasTurned] = maxLength;
+        return maxLength;
+    }
+    int lenOfVDiagonal(vector<vector<int>>& grid) {
+        rows = grid.size();
+        cols = grid[0].size();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                memset(dp[i][j], -1, sizeof(dp[i][j]));
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == 1) {
+                    for (int direction = 0; direction < 4; direction++) {
+                        result = max(result, dfs(i, j, direction, false, 2, grid));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+};

@@ -1,0 +1,27 @@
+class Solution {
+public:
+    vector<vector<int>> sortMatrix(vector<vector<int>>& grid) {
+        int n = grid.size();
+        for(int d =0;d<n;d++){
+            vector<int>diagonal;
+            for (int r = d,c = 0; r<n && c<n;r++,c++){
+                diagonal.push_back(grid[r][c]);
+            }
+            sort(diagonal.begin(), diagonal.end(), greater<int>());
+            for (int r = d, c = 0, i = 0; r < n && c < n; r++, c++, i++) {
+                grid[r][c] = diagonal[i];
+            }
+        }
+        for (int d = 1; d < n; d++) {
+            vector<int> diagonal;
+            for (int r = 0, c = d; r < n && c < n; r++, c++) {
+                diagonal.push_back(grid[r][c]);
+            }
+            sort(diagonal.begin(), diagonal.end());
+            for (int r = 0, c = d, i = 0; r < n && c < n; r++, c++, i++) {
+                grid[r][c] = diagonal[i];
+            }
+        }
+        return grid;
+    }
+};

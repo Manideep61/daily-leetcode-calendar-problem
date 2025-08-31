@@ -1,0 +1,55 @@
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        bool usedInRow[9][10] = {false};
+        bool usedInCol[9][10] = {false};
+        bool usedInBox[9][10] = {false};
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (board[row][col] != '.') {
+                    int num = board[row][col] - '0';
+                    int boxIndex = (row / 3) * 3 + (col / 3);
+                    usedInRow[row][num] = true;
+                    usedInCol[col][num] = true;
+                    usedInBox[boxIndex][num] = true;
+                }
+            }
+        }
+        backtrack(board, usedInRow, usedInCol, usedInBox, 0, 0);
+    }
+private:
+    bool backtrack(vector<vector<char>>& board, 
+                bool usedInRow[9][10], 
+                bool usedInCol[9][10], 
+                bool usedInBox[9][10], 
+                int row, int col)
+    {
+        if (row == 9) {
+            return true;
+        }
+        if (col == 9) {
+            return backtrack(board, usedInRow, usedInCol, usedInBox, row + 1, 0);
+        }
+        if (board[row][col] != '.') {
+            return backtrack(board, usedInRow, usedInCol, usedInBox, row, col + 1);
+        }
+        int boxIndex = (row / 3) * 3 + (col / 3);
+
+        for (int num = 1; num <= 9; num++) {
+            if (!usedInRow[row][num] && !usedInCol[col][num] && !usedInBox[boxIndex][num]) {
+                board[row][col] = num + '0';
+                usedInRow[row][num] = true;
+                usedInCol[col][num] = true;
+                usedInBox[boxIndex][num] = true;
+                if (backtrack(board, usedInRow, usedInCol, usedInBox, row, col + 1)) {
+                    return true;
+                }
+                board[row][col] = '.';
+                usedInRow[row][num] = false;
+                usedInCol[col][num] = false;
+                usedInBox[boxIndex][num] = false;
+            }
+        }
+        return false;
+    }
+};

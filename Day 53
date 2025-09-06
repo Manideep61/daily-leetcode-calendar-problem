@@ -1,0 +1,23 @@
+class Solution {
+public:
+    long long precomputedSum[18] = {1};
+    long long calculateSum(unsigned x) {
+        if (x == 0) return 0;
+        int power = (31 - countl_zero(x)) / 2;
+        int remainder = x - (1 << (2 * power));
+        return precomputedSum[power] + remainder * (power + 1LL);
+    }
+    long long minOperations(vector<vector<int>>& queries) {
+        for (int i = 1; i < 18; i++) {
+            precomputedSum[i] = precomputedSum[i - 1] + 3LL * i * (1LL << (2 * (i - 1))) + 1;
+        }
+        long long totalOperations = 0;
+        for (auto& query : queries) {
+            int left = query[0] - 1;
+            int right = query[1];
+            long long diff = calculateSum(right) - calculateSum(left);
+            totalOperations += (diff + 1) / 2;
+        }
+        return totalOperations;
+    }
+};

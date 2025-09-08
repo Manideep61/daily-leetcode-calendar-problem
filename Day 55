@@ -1,0 +1,21 @@
+class Solution {
+public:
+    vector<int> getNoZeroIntegers(int n) {
+        vector<int> result;
+        auto hasZero = [](int num) {
+            while (num > 0) {
+                if (num % 10 == 0) return true;
+                    num /= 10;
+                }
+            return false;
+        };
+        for (int i = 1; i < n; ++i) {
+            if (!hasZero(i) && !hasZero(n - i)) {
+                result.push_back(i);
+                result.push_back(n - i);
+                return result;
+            }
+        }
+        return result;
+    }
+};

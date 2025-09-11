@@ -1,0 +1,22 @@
+class Solution {
+public:
+    string sortVowels(string s) {
+        auto isVowel = [](char c) {
+            c = tolower(c);
+            return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        };                                                    
+        vector<char> vowels;
+        vector<int> indices;
+        for (int i = 0; i < s.size(); ++i) {
+            if (isVowel(s[i])) {
+                vowels.push_back(s[i]);
+                indices.push_back(i);
+            }
+        }
+        sort(vowels.begin(), vowels.end());
+        for (int i = 0; i < indices.size(); ++i) {
+            s[indices[i]] = vowels[i];
+        }
+        return s;
+    }
+};

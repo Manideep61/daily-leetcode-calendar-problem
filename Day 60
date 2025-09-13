@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int maxFreqSum(string s) {
+        map<char,int> temp;
+        int result1=0,result2=0,result=0;
+        int n = s.size();
+        for(int i=0;i<n;i++){
+            temp[s[i]]+=1;
+        }
+        for(auto i:temp){
+            int x=0,y=0;
+            if(i.first=='a'||i.first=='e'||i.first=='i'||i.first=='o'||i.first=='u'){
+                x=i.second;
+                result1=max(x,result1);
+            }else{
+                y=i.second;
+                result2=max(y,result2);
+            }
+        }
+        result = result1+result2;
+        return result;
+    }
+};

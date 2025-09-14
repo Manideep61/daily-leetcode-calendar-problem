@@ -1,0 +1,50 @@
+class Solution {
+public:
+    vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
+        unordered_set<string> exact;
+        unordered_map<string, string> case_insensitive;
+        unordered_map<string, string> vowel_error;
+        auto toLower = [](const string& s) {
+            string res = s;
+            for (auto& c : res) c = tolower(c);
+            return res;
+        };
+        auto devowel = [](const string& s) {
+            string res = s;
+            for (auto& c : res) {
+                if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+                    c = '*';
+                }
+            return res;
+        };
+        for (const string& word : wordlist) {
+            exact.insert(word);
+            string lower = toLower(word);
+            if (case_insensitive.find(lower) == case_insensitive.end())
+                case_insensitive[lower] = word;
+
+            string devow = devowel(lower);
+            if (vowel_error.find(devow) == vowel_error.end())
+                vowel_error[devow] = word;
+        }
+        vector<string> ans;
+        for (const string& query : queries) {
+            if (exact.count(query)) {
+                ans.push_back(query);
+                continue;
+            }
+            string lower = toLower(query);
+            if (case_insensitive.count(lower)) {
+                ans.push_back(case_insensitive[lower]);
+                continue;
+            }
+            string devow = devowel(lower);
+            if (vowel_error.count(devow)) {
+                ans.push_back(vowel_error[devow]);
+                continue;
+            }
+            ans.push_back("");
+        }
+        return ans;
+    }
+};

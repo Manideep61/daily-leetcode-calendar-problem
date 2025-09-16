@@ -1,0 +1,31 @@
+class Solution {
+public:
+    vector<int> replaceNonCoprimes(vector<int>& nums) {
+        vector<int> resultStack;
+
+        for (int currentNum : nums) {
+            while (!resultStack.empty()) {
+                int topNum = resultStack.back();
+                int commonDivisor = findGCD(topNum, currentNum);
+
+                if (commonDivisor == 1) {
+                    break;
+                }
+
+                resultStack.pop_back();
+                long long lcm = (long long)topNum / commonDivisor * currentNum;
+                currentNum = (int)lcm;
+            }
+
+            resultStack.push_back(currentNum);
+        }
+        return resultStack;
+    }
+private:
+    int findGCD(int a, int b) {
+        if (b == 0)
+            return a;
+        return findGCD(b, a % b);
+
+    }
+};

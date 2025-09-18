@@ -1,0 +1,55 @@
+class TaskManager {
+private:
+    priority_queue<pair<int, int>> taskQueue; // {priority, taskId}
+    unordered_map<int, int> taskToPriority;   // taskId -> priority
+    unordered_map<int, int> taskToUser;
+public:
+    TaskManager(vector<vector<int>>& tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            int userId = tasks[i][0];
+            int taskId = tasks[i][1];
+            int priority = tasks[i][2];
+            add(userId, taskId, priority);
+        }
+    }
+    
+    void add(int userId, int taskId, int priority) {
+        taskQueue.push(make_pair(priority, taskId));
+        taskToPriority[taskId] = priority;
+        taskToUser[taskId] = userId;
+    }
+    
+    void edit(int taskId, int newPriority) {
+        taskQueue.push(make_pair(newPriority, taskId));
+        taskToPriority[taskId] = newPriority;
+    }
+    
+    void rmv(int taskId) {
+        taskToPriority[taskId] = -1; 
+    }
+    
+    int execTop() {
+        while (!taskQueue.empty()) {
+            pair<int, int> current = taskQueue.top();
+            taskQueue.pop();
+
+            int priority = current.first;
+            int taskId = current.second;
+
+            if (taskToPriority[taskId] == priority) {
+                taskToPriority[taskId] = -1; // mark as executed
+                return taskToUser[taskId];
+            }
+        }
+        return -1;
+    }
+};
+
+/**
+ * Your TaskManager object will be instantiated and called as such:
+ * TaskManager* obj = new TaskManager(tasks);
+ * obj->add(userId,taskId,priority);
+ * obj->edit(taskId,newPriority);
+ * obj->rmv(taskId);
+ * int param_4 = obj->execTop();
+ */

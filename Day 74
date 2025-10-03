@@ -1,0 +1,57 @@
+class Solution {
+public:
+    int trapRainWater(vector<vector<int>>& heightMap) {
+        if (heightMap.empty() || heightMap[0].empty()) return 0;
+        int m = heightMap.size();
+        int n = heightMap[0].size();
+        if (m < 3 || n < 3) return 0;
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<tuple<int, int, int>>> pq;
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+
+        for (int i = 0; i < m; i++) {
+            pq.push(make_tuple(heightMap[i][0], i, 0));
+            visited[i][0] = true;
+            pq.push(make_tuple(heightMap[i][n - 1], i, n - 1));
+            visited[i][n - 1] = true;
+        }
+        for (int j = 0; j < n; j++) {
+            if (!visited[0][j]) {
+                pq.push(make_tuple(heightMap[0][j], 0, j));
+                visited[0][j] = true;
+            }
+            if (!visited[m - 1][j]) {
+                pq.push(make_tuple(heightMap[m - 1][j], m - 1, j));
+                visited[m - 1][j] = true;
+            }
+        }
+        int dirs[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int result = 0;
+
+        while (!pq.empty()) {
+            tuple<int, int, int> current = pq.top();
+            pq.pop();
+
+            int height = get<0>(current);
+            int row = get<1>(current);
+            int col = get<2>(current);
+            for (int i = 0; i < 4; i++) {
+                int newRow = row + dirs[i][0];
+                int newCol = col + dirs[i][1];
+
+                if (newRow < 0 || newRow >= m || newCol < 0 || newCol >= n || visited[newRow][newCol]) {
+                    continue;
+                }
+
+                visited[newRow][newCol] = true;
+
+                int newHeight = heightMap[newRow][newCol];
+
+                if (newHeight < height) {
+                    result += height - newHeight;
+                }
+                pq.push(make_tuple(max(height, newHeight), newRow, newCol));
+            }
+        }
+        return result;
+    }
+};

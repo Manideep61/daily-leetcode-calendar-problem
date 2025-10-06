@@ -1,0 +1,54 @@
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        vector<vector<int>> edges;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int current = i * n + j;
+                if (i > 0) {
+                    int up = (i - 1) * n + j;
+                    int maxHeight = max(grid[i][j], grid[i - 1][j]);
+                    edges.push_back({maxHeight, current, up});
+                }
+                if (j > 0) {
+                    int left = i * n + (j - 1);
+                    int maxHeight = max(grid[i][j], grid[i][j - 1]);
+                    edges.push_back({maxHeight, current, left});
+                }
+            }
+        }
+        sort(edges.begin(), edges.end());
+
+        vector<int> parent(m * n);
+        for (int i = 0; i < m * n; i++) {
+            parent[i] = i;
+        }
+        function<int(int)> find = [&](int x) {
+            while (x != parent[x]) {
+                parent[x] = parent[parent[x]];
+                x = parent[x];
+            }
+            return x;
+        };
+        auto unite = [&](int x, int y) {
+            int rootX = find(x);
+            int rootY = find(y);
+            parent[rootX] = rootY;
+        };
+        for (int i = 0; i < edges.size(); i++) {
+            int cost = edges[i][0];
+            int u = edges[i][1];
+            int v = edges[i][2];
+
+            unite(u, v);
+
+            if (find(0) == find(m * n - 1)) {
+                return cost;
+            }
+        }
+        return grid[0][0];
+    }
+};

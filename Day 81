@@ -1,0 +1,27 @@
+class Solution {
+public:
+    long long maximumTotalDamage(vector<int>& power) {
+        unordered_map<int, long long> damageCount;
+        for (int d : power)
+            damageCount[d] += d;
+
+        vector<int> unique;
+        for (auto& [val, _] : damageCount)
+            unique.push_back(val);
+        sort(unique.begin(), unique.end());
+
+        int n = unique.size();
+        vector<long long> dp(n, 0);
+
+        for (int i = 0; i < n; ++i) {
+            long long take = damageCount[unique[i]];
+            int j = i - 1;
+            while (j >= 0 && unique[j] >= unique[i] - 2)
+                j--;
+            if (j >= 0) take += dp[j];
+            long long skip = (i > 0) ? dp[i - 1] : 0;
+            dp[i] = max(skip, take);
+        }
+        return dp[n - 1];
+    }
+};

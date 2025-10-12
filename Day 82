@@ -1,0 +1,56 @@
+static constexpr int MOD = 1e9 + 7;
+static int combination[31][31] = {{0}};
+static int memo[31][31][50][31];
+class Solution {
+    int totalElements, targetSetBits, numValues;
+    void computeCombinations() {
+        if (combination[0][0] == 1) return;
+        for (int i = 1; i <= 30; i++) {
+            combination[i][0] = combination[i][i] = 1;
+            for (int j = 1; j <= i / 2; j++) {
+                int value = combination[i - 1][j - 1] + combination[i - 1][j];
+                combination[i][j] = combination[i][i - j] = value;
+            }
+        }
+    }
+    int countWays(int remaining, int bitsNeeded, int index, unsigned bitMask, vector<int>& values) {
+        int currentBits = __builtin_popcount(bitMask);
+        if (remaining < 0 || bitsNeeded < 0 || remaining + currentBits < bitsNeeded)
+            return 0;
+        if (remaining == 0)
+            return (bitsNeeded == currentBits) ? 1 : 0;
+        if (index >= numValues)
+            return 0;
+        if (memo[remaining][bitsNeeded][index][bitMask] != -1)
+            return memo[remaining][bitsNeeded][index][bitMask];
+        
+        long long totalWays = 0;
+        long long currentPower = 1;
+        int base = values[index];
+
+        for (int count = 0; count <= remaining; count++) {
+            long long currentComb = combination[remaining][count] * currentPower % MOD;
+            unsigned updatedMask = bitMask + count;
+            unsigned nextMask = updatedMask >> 1;
+            bool newBit = updatedMask & 1;
+            totalWays = (totalWays + currentComb * countWays(remaining - count, bitsNeeded - newBit, index + 1, nextMask, values)) % MOD;
+            currentPower = (currentPower * base) % MOD;
+        }
+        return memo[remaining][bitsNeeded][index][bitMask] = totalWays;
+    }
+public:
+    int magicalSum(int m, int k, vector<int>& nums) {
+        computeCombinations();
+        totalElements = m;
+        targetSetBits = k;
+        numValues = nums.size();
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= m; j++) {
+                for (int s = 0; s < numValues; s++) {
+                    memset(memo[i][j][s], -1, sizeof(int) * (m + 1));
+                }
+            }
+        }
+        return countWays(m, k, 0, 0, nums);
+    }
+};

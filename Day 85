@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int maxIncreasingSubarrays(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> inc(n, 1);
+        for (int i = n - 2; i >= 0; --i) {
+            if (nums[i] < nums[i + 1]) {
+                inc[i] = inc[i + 1] + 1;
+            }
+        }
+        int lo = 1, hi = n / 2;
+        int ans = 0;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            bool ok = false;
+            for (int i = 0; i + 2 * mid <= n; ++i) {
+                if (inc[i] >= mid && inc[i + mid] >= mid) {
+                    ok = true;
+                    break;
+                }
+            }
+            if (ok) {
+                ans = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        return ans;
+    }
+};
